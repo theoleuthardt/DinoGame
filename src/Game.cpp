@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include "raylib.h"
 #include <cstdio>
+#include <iostream>
 
 using namespace std;
 
@@ -53,24 +54,37 @@ void Game::Update() {
 
         static int frameCounter = 0;
         frameCounter++;
-        int spawnInterval = max(20, 50 - score / 1000);
-        int spawnChance = max(2, 8 - score / 2500);
+
+        constexpr int minSpawnInterval = 20;
+        const int maxSpawnInterval = max(50 - score / 1000, 25);
+        const int spawnInterval = GetRandomValue(minSpawnInterval, maxSpawnInterval);
 
         if (frameCounter >= spawnInterval) {
             frameCounter = 0;
 
-            if (GetRandomValue(1, spawnChance) == 1) {
-                bool canSpawn = true;
-                for (auto &cactus : cacti) {
-                    if (cactus.GetRect().x > GetScreenWidth() * 2/3) {
-                        canSpawn = false;
-                        break;
-                    }
+            bool canSpawn = true;
+            for (auto &cactus : cacti) {
+                if (cactus.GetRect().x > static_cast<float>(GetScreenWidth()) * 2 / 3) {
+                    canSpawn = false;
+                    break;
+                }
+            }
+
+            if (canSpawn) {
+                // calculate the gap between cacti based on the score
+                const int minGap = max(100, 200 - score / 250);
+                int maxGap = 300 - min(score / 3, 150);
+
+                // increase the minimum gap between cacti based on the score for balancing
+                if (score > 5000) {
+                    maxGap = minGap + 50;
+                } else if (score > 10000) {
+                    maxGap = minGap + 100;
                 }
 
-                if (canSpawn) {
-                    cacti.push_back(Cactus(cactusTexture, 800, 330 - cactusTexture.height));
-                }
+                // spawn a new cactus
+                int cactusX = GetScreenWidth() + GetRandomValue(minGap, maxGap);
+                cacti.emplace_back(cactusTexture, cactusX, 330 - cactusTexture.height);
             }
         }
 
@@ -78,8 +92,8 @@ void Game::Update() {
             cactus.Update();
         }
 
-        erase_if(cacti,
-                 [](Cactus &c) { return c.IsOffScreen(); });
+        // remove cacti that are off screen
+        erase_if(cacti, [](Cactus &c) { return c.IsOffScreen(); });
 
         for (auto &cactus : cacti) {
             if (CheckCollision(*dino, cactus)) {
