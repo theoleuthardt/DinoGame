@@ -19,6 +19,9 @@ dodging obstacles and aiming for the highest score. Jump over cacti and see how 
 - Library: [Raylib Website](https://www.raylib.com/) [Raylib Github](https://github.com/raysan5/raylib/tree/master)
 - CMakeList Template: [CMakeList by tupini07](https://github.com/tupini07/raylib-cpp-cmake-template/blob/main/CMakeLists.txt)
 - Game Assets: [Dino Game Assets](https://www.spriters-resource.com/browser_games/googledinosaurrungame/sheet/78171/)
+- CropImages: [iloveimg Image Cropper](https://www.iloveimg.com/crop-image)
+- RemoveBG for Game Assets: [RemoveBG Tool](https://www.remove.bg/)
+- Generative AI for fixing some bugs: [ClaudeAI](https://claude.ai/) [ChatGPT](https://chatgpt.com/)
 
 ### Installation
 #### Download build from Github
