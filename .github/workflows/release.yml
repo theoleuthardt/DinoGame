@@ -119,12 +119,11 @@ jobs:
           dir ..
         shell: powershell
 
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: DinoGame-${{ runner.os }}
-          path: ..\DinoGame-${{ runner.os }}.zip
+          path: ${{ steps.get-output-dir.outputs.output_dir }}/DinoGame-Windows.zip
 
   release:
     needs: build
