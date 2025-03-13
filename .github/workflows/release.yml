@@ -23,10 +23,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Dependencies (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: sudo apt update && sudo apt install -y cmake g++
-        shell: bash
+      - name: Install Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt install -y cmake g++
+
+      - name: Install Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install cmake gcc
 
       - name: Install Dependencies (Windows)
         if: runner.os == 'Windows'
