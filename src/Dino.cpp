@@ -1,7 +1,7 @@
 #include "Dino.hpp"
 
-Dino::Dino(Texture2D tex) : texture(tex), velocityY(0), isJumping(false) {
-    rect = {50.0f, static_cast<float>(330 - texture.height),
+Dino::Dino(Texture2D texture) : texture(texture), velocityY(0), isJumping(false) {
+    rect = {50.0f, static_cast<float>(320 - texture.height),
         static_cast<float>(texture.width), static_cast<float>(texture.height)};
 }
 
@@ -16,8 +16,9 @@ void Dino::Update() {
     velocityY += GRAVITY;
     rect.y += velocityY;
 
-    if (rect.y >= 300 - rect.height) {
-        rect.y = 300 - rect.height;
+    if (rect.y >= groundLevel - rect.height) {
+        rect.y = groundLevel - rect.height;
+        velocityY = 0;
         isJumping = false;
     }
 }

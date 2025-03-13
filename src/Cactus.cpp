@@ -1,7 +1,7 @@
 #include "Cactus.hpp"
 
 Cactus::Cactus(Texture2D texture, float x, float y) : texture(texture) {
-    rect = {static_cast<float>(x), static_cast<float>(300 - texture.height),
+    rect = {static_cast<float>(x), static_cast<float>(320 - texture.height),
         static_cast<float>(texture.width), static_cast<float>(texture.height)};
 }
 

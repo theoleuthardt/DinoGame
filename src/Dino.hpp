@@ -17,6 +17,7 @@ private:
     bool isJumping;
     static constexpr float GRAVITY = 0.4;
     static constexpr float JUMP_STRENGTH = -10;
+    int groundLevel = 320;
 };
 
 #endif //DINO_HPP
