@@ -1,6 +1,6 @@
 #include "Game.hpp"
 #include "raylib.h"
-#include <algorithm>
+#include <cstdio>
 
 using namespace std;
 
@@ -22,7 +22,7 @@ Game::Game() {
     gameOver = false;
 
     // spawn the first cactus
-    cacti.push_back(Cactus(cactusTexture, 800, 330 - cactusTexture.height));
+    cacti.emplace_back(cactusTexture, 800, 330 - cactusTexture.height);
 }
 
 Game::~Game() {
@@ -78,9 +78,8 @@ void Game::Update() {
             cactus.Update();
         }
 
-        cacti.erase(remove_if(cacti.begin(), cacti.end(),
-                                   [](Cactus &c) { return c.IsOffScreen(); }),
-                    cacti.end());
+        erase_if(cacti,
+                 [](Cactus &c) { return c.IsOffScreen(); });
 
         for (auto &cactus : cacti) {
             if (CheckCollision(*dino, cactus)) {
@@ -106,23 +105,23 @@ void Game::Draw() {
             cactus.Draw();
         }
         if (hintTimer < 4.0f) {
-            int hintWidth = MeasureText("Press SPACE to Jump!", 20);
+            const int hintWidth = MeasureText("Press SPACE to Jump!", 20);
             DrawText("Press SPACE to Jump!", GetScreenWidth()/2 - hintWidth/2, 50, 20, DARKGRAY);
         }
     } else {
-        int gameOverTextWidth = MeasureText("GAME OVER", 30);
+        const int gameOverTextWidth = MeasureText("GAME OVER", 30);
         DrawText("GAME OVER", GetScreenWidth()/2 - gameOverTextWidth/2, 150, 30, RED);
 
-        int restartTextWidth = MeasureText("Press R to restart!", 20);
+        const int restartTextWidth = MeasureText("Press R to restart!", 20);
         DrawText("Press R to restart!", GetScreenWidth()/2 - restartTextWidth/2, 190, 20, BLACK);
         if (IsKeyPressed(KEY_R)) {
             Reset();
         }
 
-        int exitTextWidth = MeasureText("Press ESC to close the game!", 20);
+        const int exitTextWidth = MeasureText("Press ESC to close the game!", 20);
         DrawText("Press ESC to close the game!", GetScreenWidth()/2 - exitTextWidth/2, 220, 20, BLACK);
 
-        int saveTextWidth = MeasureText("(Your highscore will be saved!)", 20);
+        const int saveTextWidth = MeasureText("(Your highscore will be saved!)", 20);
         DrawText("(Your highscore will be saved!)", GetScreenWidth()/2 - saveTextWidth/2, 240, 20, BLACK);
 
         Save();
@@ -144,10 +143,10 @@ void Game::Reset() {
     hintTimer = 0.0f;
 
     // spawn the first cactus again
-    cacti.push_back(Cactus(cactusTexture, 900, 300 - cactusTexture.height));
+    cacti.emplace_back(cactusTexture, 900, 300 - cactusTexture.height);
 }
 
-void Game::Save() {
+void Game::Save() const {
     FILE *file = fopen("save.dat", "wb");
     if (file) {
         fwrite(&highscore, sizeof(highscore), 1, file);

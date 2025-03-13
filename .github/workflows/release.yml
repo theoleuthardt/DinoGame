@@ -110,7 +110,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           cd ${{ steps.get-output-dir.outputs.output_dir }}
-          Compress-Archive -Path .\* -DestinationPath ..\DinoGame-Windows.zip
+          Compress-Archive -Path .\* -DestinationPath ..\..\DinoGame-Windows.zip
         shell: powershell
 
       - name: List files after zipping
@@ -123,7 +123,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DinoGame-${{ runner.os }}
-          path: ${{ steps.get-output-dir.outputs.output_dir }}/DinoGame-Windows.zip
+          path: DinoGame-${{ runner.os }}.zip
 
   release:
     needs: build

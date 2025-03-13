@@ -53,7 +53,7 @@ private:
     /**
      * @brief Saves the high score to a dat-file. If the file does not exist, it will be created.
      */
-    void Save();
+    void Save() const;
 
     /**
      * @brief Loads the high score from a dat-file. If the file does not exist, the high score will be 0.
@@ -67,22 +67,22 @@ private:
      * @return true if the dino and cactus are colliding
      * @return false if the dino and cactus are not colliding
      */
-    bool CheckCollision(Dino &dino, Cactus &cactus);
+    static bool CheckCollision(Dino &dino, Cactus &cactus);
 
     /**
      * @brief The texture for the dino (3 frames)
      */
-    Texture2D dinoTexture;
+    Texture2D dinoTexture{};
 
     /**
      * @brief The texture for the cactus
      */
-    Texture2D cactusTexture;
+    Texture2D cactusTexture{};
 
     /**
      * @brief The texture for the ground
      */
-    Texture2D groundTexture;
+    Texture2D groundTexture{};
 
     /**
      * @brief The dino object
