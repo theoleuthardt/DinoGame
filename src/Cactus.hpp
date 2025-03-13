@@ -4,7 +4,7 @@
 
 class Cactus {
 public:
-    Cactus(Texture2D texture, float x);
+    Cactus(Texture2D texture, float x, float y);
     void Update();
     void Draw();
     bool IsOffScreen();

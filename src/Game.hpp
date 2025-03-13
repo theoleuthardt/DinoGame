@@ -17,6 +17,8 @@ private:
     void Update();
     void Draw();
     void Reset();
+    void Save();
+    void Load();
     bool CheckCollision(Dino &dino, Cactus &cactus);
 
     Texture2D dinoTexture;
@@ -25,6 +27,7 @@ private:
     Dino *dino;
     vector<Cactus> cacti;
     int score;
+    int highscore;
     bool gameOver;
 };
 

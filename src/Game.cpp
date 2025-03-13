@@ -15,7 +15,9 @@ Game::Game() {
 
     dino = new Dino(dinoTexture);
     score = 0;
+    highscore = 0;
     gameOver = false;
+    cacti.push_back(Cactus(cactusTexture, 800, 330 - cactusTexture.height));
 }
 
 Game::~Game() {
@@ -27,6 +29,8 @@ Game::~Game() {
 }
 
 void Game::Run() {
+    Load();
+
     while (!WindowShouldClose()) {
         Update();
         Draw();
@@ -41,8 +45,27 @@ void Game::Update() {
 
         dino->Update();
 
-        if (GetRandomValue(0, 100) < 2) {
-            cacti.push_back(Cactus(cactusTexture, 800));
+        static int frameCounter = 0;
+        frameCounter++;
+        int spawnInterval = max(20, 50 - score / 1000);
+        int spawnChance = max(2, 8 - score / 2500);
+
+        if (frameCounter >= spawnInterval) {
+            frameCounter = 0;
+
+            if (GetRandomValue(1, spawnChance) == 1) {
+                bool canSpawn = true;
+                for (auto &cactus : cacti) {
+                    if (cactus.GetRect().x > GetScreenWidth() * 2/3) {
+                        canSpawn = false;
+                        break;
+                    }
+                }
+
+                if (canSpawn) {
+                    cacti.push_back(Cactus(cactusTexture, 800, 330 - cactusTexture.height));
+                }
+            }
         }
 
         for (auto &cactus : cacti) {
@@ -68,6 +91,7 @@ void Game::Draw() {
     ClearBackground(RAYWHITE);
 
     DrawText(TextFormat("Score: %d", score), 10, 10, 20, BLACK);
+    DrawText(TextFormat("Highscore: %d", highscore), 10, 30, 20, BLACK);
     DrawTexture(groundTexture, 0, 300, WHITE);
 
     if (!gameOver) {
@@ -87,6 +111,8 @@ void Game::Draw() {
 
         int exitTextWidth = MeasureText("Press ESC to close the game!", 20);
         DrawText("Press ESC to close the game!", GetScreenWidth()/2 - exitTextWidth/2, 210, 20, BLACK);
+
+        Save();
     }
 
     EndDrawing();
@@ -96,8 +122,30 @@ void Game::Reset() {
     delete dino;
     dino = new Dino(dinoTexture);
     cacti.clear();
+    highscore = max(highscore, score);
     score = 0;
     gameOver = false;
+    cacti.push_back(Cactus(cactusTexture, 900, 300 - cactusTexture.height));
+}
+
+void Game::Save() {
+    FILE *file = fopen("save.dat", "wb");
+    if (file) {
+        fwrite(&highscore, sizeof(highscore), 1, file);
+        fclose(file);
+    } else {
+        TraceLog(LOG_WARNING, "Failed to save highscore");
+    }
+}
+
+void Game::Load() {
+    FILE *file = fopen("save.dat", "rb");
+    if (file) {
+        fread(&highscore, sizeof(highscore), 1, file);
+        fclose(file);
+    } else {
+        TraceLog(LOG_WARNING, "Failed to load highscore");
+    }
 }
 
 bool Game::CheckCollision(Dino &dino, Cactus &cactus) {

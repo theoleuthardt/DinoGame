@@ -1,7 +1,7 @@
 #include "Dino.hpp"
 
 Dino::Dino(Texture2D tex) : texture(tex), velocityY(0), isJumping(false) {
-    rect = {50.0f, static_cast<float>(300 - texture.height),
+    rect = {50.0f, static_cast<float>(330 - texture.height),
         static_cast<float>(texture.width), static_cast<float>(texture.height)};
 }
 
