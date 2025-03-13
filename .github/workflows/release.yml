@@ -120,7 +120,6 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event.inputs.question == 'YES'
     steps:
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
