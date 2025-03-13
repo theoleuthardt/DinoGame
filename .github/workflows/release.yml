@@ -1,0 +1,66 @@
+name: Build and Release DinoGame
+
+on:
+  workflow_dispatch:
+    inputs:
+      question:
+        description: 'Release?'
+        required: false
+        default: 'YES'
+        type: choice
+        options:
+          - 'YES'
+          - 'PLS DONT'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: sudo apt update && sudo apt install -y cmake g++
+        shell: bash
+
+      - name: Install Dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' && refreshenv
+        shell: powershell
+
+      - name: Configure CMake
+        run: cmake -B build
+        shell: bash
+
+      - name: Build Project
+        run: cmake --build build --config Release
+        shell: bash
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DinoGame-${{ runner.os }}
+          path: build/DinoGame*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
