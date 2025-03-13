@@ -25,11 +25,17 @@ jobs:
 
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt install -y cmake g++
+        run: |
+          sudo apt update
+          sudo apt install -y cmake g++ xorg-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+        shell: bash
 
       - name: Install Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install cmake gcc
+        run: |
+          brew install cmake gcc
+          brew install --cask xquartz
+        shell: bash
 
       - name: Install Dependencies (Windows)
         if: runner.os == 'Windows'
