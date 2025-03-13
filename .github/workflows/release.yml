@@ -38,19 +38,39 @@ jobs:
           Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         shell: powershell
 
-      - name: Create Build Directories
-        run: |
-          mkdir -p build/windows/assets
-          mkdir -p build/linux/assets
-          mkdir -p build/macos/assets
-        shell: bash
-
       - name: Configure CMake
         run: cmake -B build
         shell: bash
 
+      # Modifikation hier - manuelles Kopieren der Assets vor dem Build
+      - name: Copy Assets (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p build/macos
+          cp -r assets build/macos/
+        shell: bash
+
+      - name: Copy Assets (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p build/linux
+          cp -r assets build/linux/
+        shell: bash
+
+      - name: Copy Assets (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir -p build/windows
+          cp -r assets build/windows/
+        shell: bash
+
       - name: Build Project
-        run: cmake --build build --config Release
+        run: |
+          if [ "${{ runner.os }}" == "macOS" ]; then
+            cmake --build build --config Release --target DinoGame
+          else
+            cmake --build build --config Release
+          fi
         shell: bash
 
       - name: Determine Output Directory

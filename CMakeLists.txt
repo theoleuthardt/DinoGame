@@ -58,7 +58,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 target_compile_definitions(${PROJECT_NAME} PRIVATE RAYLIB_STATIC)
 
 add_custom_target(copy_assets ALL
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_PATH} ${OUTPUT_DIR}/assets
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${OUTPUT_DIR}/assets
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${OUTPUT_DIR}/assets
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${ASSETS_PATH} ${OUTPUT_DIR}/assets
 )
 add_dependencies(${PROJECT_NAME} copy_assets)
