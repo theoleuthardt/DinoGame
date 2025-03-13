@@ -1,6 +1,10 @@
 name: Build and Release DinoGame
 
 on:
+  pull_request:
+    branches:
+      - main
+
   workflow_dispatch:
     inputs:
       question:
