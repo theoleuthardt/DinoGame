@@ -100,17 +100,23 @@ jobs:
           zip -r ../../DinoGame-${{ runner.os }}.zip .
         shell: bash
 
+      - name: List files before zipping
+        if: runner.os == 'Windows'
+        run: |
+          dir ${{ steps.get-output-dir.outputs.output_dir }}
+        shell: powershell
+
       - name: Zip Build with Assets (Windows)
         if: runner.os == 'Windows'
         run: |
           cd ${{ steps.get-output-dir.outputs.output_dir }}
-          Compress-Archive -Path .\* -DestinationPath ..\DinoGame-${{ runner.os }}.zip
+          Compress-Archive -Path .\* -DestinationPath ..\DinoGame-Windows.zip
         shell: powershell
 
       - name: List files after zipping
         if: runner.os == 'Windows'
         run: |
-          dir ..\DinoGame-${{ runner.os }}.zip
+          dir ..
         shell: powershell
 
 
