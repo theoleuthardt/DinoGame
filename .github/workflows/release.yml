@@ -12,6 +12,9 @@ on:
           - 'YES'
           - 'PLS DONT'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -101,14 +104,21 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           cd ${{ steps.get-output-dir.outputs.output_dir }}
-          powershell Compress-Archive -Path .\* -DestinationPath ..\..\DinoGame-${{ runner.os }}.zip
-        shell: bash
+          Compress-Archive -Path .\* -DestinationPath ..\DinoGame-${{ runner.os }}.zip
+        shell: powershell
+
+      - name: List files after zipping
+        if: runner.os == 'Windows'
+        run: |
+          dir ..\DinoGame-${{ runner.os }}.zip
+        shell: powershell
+
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: DinoGame-${{ runner.os }}
-          path: DinoGame-${{ runner.os }}.zip
+          path: ..\DinoGame-${{ runner.os }}.zip
 
   release:
     needs: build
@@ -128,3 +138,5 @@ jobs:
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
