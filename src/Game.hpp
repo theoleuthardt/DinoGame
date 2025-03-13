@@ -108,6 +108,11 @@ private:
      * @brief The state if the game is over
      */
     bool gameOver;
+
+    /**
+     * @brief The timer to manage the jump hint to disappear after a certain time
+     */
+    float hintTimer = 0.0f;
 };
 
 #endif //GAME_HPP

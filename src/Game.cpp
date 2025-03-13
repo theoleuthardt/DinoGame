@@ -5,18 +5,23 @@
 using namespace std;
 
 Game::Game() {
+    // initialize the game window and set the target FPS
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(800, 400, "Retro Dino Game");
     SetTargetFPS(60);
 
+    // load the textures
     dinoTexture = LoadTexture("assets/dino.png");
     cactusTexture = LoadTexture("assets/cactus.png");
     groundTexture = LoadTexture("assets/ground.png");
 
+    // create the dino object and set the initial score, highscore and game over state
     dino = new Dino(dinoTexture);
     score = 0;
     highscore = 0;
     gameOver = false;
+
+    // spawn the first cactus
     cacti.push_back(Cactus(cactusTexture, 800, 330 - cactusTexture.height));
 }
 
@@ -39,10 +44,11 @@ void Game::Run() {
 
 void Game::Update() {
     if (!gameOver) {
+        hintTimer += GetFrameTime();
+
         if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP)) {
             dino->Jump();
         }
-
         dino->Update();
 
         static int frameCounter = 0;
@@ -99,6 +105,10 @@ void Game::Draw() {
         for (auto &cactus : cacti) {
             cactus.Draw();
         }
+        if (hintTimer < 4.0f) {
+            int hintWidth = MeasureText("Press SPACE to Jump!", 20);
+            DrawText("Press SPACE to Jump!", GetScreenWidth()/2 - hintWidth/2, 50, 20, DARKGRAY);
+        }
     } else {
         int gameOverTextWidth = MeasureText("GAME OVER", 30);
         DrawText("GAME OVER", GetScreenWidth()/2 - gameOverTextWidth/2, 150, 30, RED);
@@ -122,12 +132,18 @@ void Game::Draw() {
 }
 
 void Game::Reset() {
+    // create a new dino object and clear the cacti vector
     delete dino;
     dino = new Dino(dinoTexture);
     cacti.clear();
+
+    // save the highscore and reset the score, game over state and hint timer
     highscore = max(highscore, score);
     score = 0;
     gameOver = false;
+    hintTimer = 0.0f;
+
+    // spawn the first cactus again
     cacti.push_back(Cactus(cactusTexture, 900, 300 - cactusTexture.height));
 }
 
