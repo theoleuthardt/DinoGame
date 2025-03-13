@@ -110,7 +110,10 @@ void Game::Draw() {
         }
 
         int exitTextWidth = MeasureText("Press ESC to close the game!", 20);
-        DrawText("Press ESC to close the game!", GetScreenWidth()/2 - exitTextWidth/2, 210, 20, BLACK);
+        DrawText("Press ESC to close the game!", GetScreenWidth()/2 - exitTextWidth/2, 220, 20, BLACK);
+
+        int saveTextWidth = MeasureText("(Your highscore will be saved!)", 20);
+        DrawText("(Your highscore will be saved!)", GetScreenWidth()/2 - saveTextWidth/2, 240, 20, BLACK);
 
         Save();
     }
