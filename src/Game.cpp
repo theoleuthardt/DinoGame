@@ -1,5 +1,8 @@
 #include "Game.hpp"
 #include "raylib.h"
+#include <algorithm>
+
+using namespace std;
 
 Game::Game() {
     SetConfigFlags(FLAG_VSYNC_HINT);
@@ -46,7 +49,7 @@ void Game::Update() {
             cactus.Update();
         }
 
-        cacti.erase(std::remove_if(cacti.begin(), cacti.end(),
+        cacti.erase(remove_if(cacti.begin(), cacti.end(),
                                    [](Cactus &c) { return c.IsOffScreen(); }),
                     cacti.end());
 
