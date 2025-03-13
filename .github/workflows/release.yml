@@ -38,6 +38,13 @@ jobs:
           Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         shell: powershell
 
+      - name: Create Build Directories
+        run: |
+          mkdir -p build/windows/assets
+          mkdir -p build/linux/assets
+          mkdir -p build/macos/assets
+        shell: bash
+
       - name: Configure CMake
         run: cmake -B build
         shell: bash
@@ -46,15 +53,42 @@ jobs:
         run: cmake --build build --config Release
         shell: bash
 
+      - name: Determine Output Directory
+        id: get-output-dir
+        run: |
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            echo "output_dir=build/windows" >> $GITHUB_OUTPUT
+          elif [ "${{ runner.os }}" == "macOS" ]; then
+            echo "output_dir=build/macos" >> $GITHUB_OUTPUT
+          else
+            echo "output_dir=build/linux" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Zip Build with Assets (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cd ${{ steps.get-output-dir.outputs.output_dir }}
+          zip -r ../../DinoGame-${{ runner.os }}.zip .
+        shell: bash
+
+      - name: Zip Build with Assets (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd ${{ steps.get-output-dir.outputs.output_dir }}
+          powershell Compress-Archive -Path .\* -DestinationPath ..\..\DinoGame-${{ runner.os }}.zip
+        shell: bash
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: DinoGame-${{ runner.os }}
-          path: build/DinoGame*
+          path: DinoGame-${{ runner.os }}.zip
 
   release:
     needs: build
     runs-on: ubuntu-latest
+    if: github.event.inputs.question == 'YES'
     steps:
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
