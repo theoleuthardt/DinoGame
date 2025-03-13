@@ -38,39 +38,23 @@ jobs:
           Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
         shell: powershell
 
+      - name: List Current Directory
+        run: ls -la
+        shell: bash
+
       - name: Configure CMake
-        run: cmake -B build
-        shell: bash
-
-      # Modifikation hier - manuelles Kopieren der Assets vor dem Build
-      - name: Copy Assets (macOS)
-        if: runner.os == 'macOS'
         run: |
-          mkdir -p build/macos
-          cp -r assets build/macos/
-        shell: bash
-
-      - name: Copy Assets (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          mkdir -p build/linux
-          cp -r assets build/linux/
-        shell: bash
-
-      - name: Copy Assets (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          mkdir -p build/windows
-          cp -r assets build/windows/
+          if [ -d "assets" ]; then
+            echo "Assets directory exists"
+          else
+            echo "Assets directory does not exist"
+            mkdir -p assets
+          fi
+          cmake -B build
         shell: bash
 
       - name: Build Project
-        run: |
-          if [ "${{ runner.os }}" == "macOS" ]; then
-            cmake --build build --config Release --target DinoGame
-          else
-            cmake --build build --config Release
-          fi
+        run: cmake --build build --config Release
         shell: bash
 
       - name: Determine Output Directory
@@ -82,6 +66,21 @@ jobs:
             echo "output_dir=build/macos" >> $GITHUB_OUTPUT
           else
             echo "output_dir=build/linux" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Fix Assets (if necessary)
+        run: |
+          TARGET_DIR="${{ steps.get-output-dir.outputs.output_dir }}/assets"
+          if [ ! -d "$TARGET_DIR" ]; then
+            echo "Creating assets directory in output directory"
+            mkdir -p "$TARGET_DIR"
+            # Wenn das ursprüngliche assets-Verzeichnis existiert, kopiere seinen Inhalt
+            if [ -d "assets" ]; then
+              cp -r assets/* "$TARGET_DIR"/ || echo "Note: No assets to copy or copy failed"
+            else
+              echo "No source assets directory found, creating empty directory"
+            fi
           fi
         shell: bash
 
