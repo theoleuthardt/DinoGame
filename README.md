@@ -27,7 +27,7 @@ dodging obstacles and aiming for the highest score. Jump over cacti and see how 
 #### Download build from Github
 - Download the latest release from the [Releases](https://github.com/theoleuthardt/DinoGame/releases) page
 - Extract the zip file
-- Run the executable
+- Run the executable (if you are running it on macos, start it from the terminal like in the build from source section below!)
 
 #### Build from source
 1. Requirements/Dependencies
